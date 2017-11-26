@@ -7,31 +7,39 @@ import {
   Glyphicon,
 } from 'react-bootstrap';
 
-const SidebarContent = ({ counties }) => {
-  const countiesMapped = counties.map(county => <Button style={styles.item} key={county}> {county} </Button>);
+const SidebarContent = ({ counties, fetchCounties, loadingCounties }) => {
+  const loading = loadingCounties;
+  const countiesMapped = counties.map(county => (
+    <Button style={styles.item} key={county.fips}>
+      {county.county}
+    </Button>
+  ));
   return (
     <div>
       <div style={styles.container}>
         <h2 align="center" style={styles.title}>Counties</h2>
         <FormGroup style={styles.search}>
           <FormControl style={styles.searchInput} type="text" placeholder="Search" />
-          <Glyphicon style={styles.searchButton} glyph="search" />
+          <Glyphicon onClick={() => fetchCounties()} style={styles.searchButton} glyph="search" />
         </FormGroup>
       </div>
-      <ButtonGroup vertical block>
-        {countiesMapped}
-      </ButtonGroup>
+      {loading && <p style={styles.loading}> Loading... </p>}
+      {!loading &&
+        <ButtonGroup vertical block>
+          {countiesMapped}
+        </ButtonGroup>
+      }
     </div>
   );
 };
 
 const styles = {
   container: {
-    margin: '20',
+    margin: 20,
   },
   title: {},
   item: {
-    borderRadius: '0',
+    borderRadius: 0,
     textAlign: 'left',
   },
   search: {},
@@ -41,10 +49,13 @@ const styles = {
   },
   searchButton: {
     width: '5%',
-    padding: '10',
+    padding: 10,
     float: 'right',
     display: 'inline',
     cursor: 'pointer',
+  },
+  loading: {
+    margin: 20,
   },
 };
 

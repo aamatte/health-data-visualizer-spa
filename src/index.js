@@ -4,8 +4,9 @@ import DockMonitor from 'redux-devtools-dock-monitor';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { createStore } from 'redux';
+import { createStore, applyMiddleware, compose } from 'redux';
 import { Provider } from 'react-redux';
+import thunk from 'redux-thunk';
 import { Router, Route, browserHistory, IndexRedirect } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux';
 
@@ -23,7 +24,10 @@ const DevTools = createDevTools(
 
 const store = createStore(
   reducer,
-  DevTools.instrument(),
+  compose(
+    applyMiddleware(thunk),
+    DevTools.instrument(),
+  ),
 );
 
 const history = syncHistoryWithStore(browserHistory, store);

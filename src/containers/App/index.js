@@ -14,18 +14,44 @@ const mapDispatchToProps = (dispatch) => { //eslint-disable-line
   };
 };
 
+const mapStateToProps = (state) => {
+  const {
+    counties,
+    selectedCounty,
+    countyData,
+    favorites,
+    loadingCounties,
+    loadingCounty,
+  } = state.counties;
+
+  return {
+    counties,
+    selectedCounty,
+    countyData,
+    favorites,
+    loadingCounties,
+    loadingCounty,
+  };
+};
+
 class App extends Component {
   static get propTypes() {
     return {
       // React Router
       children: PropTypes.object,
       router: PropTypes.object,
+      actions: PropTypes.object,
+      counties: PropTypes.array,
+      loadingCounties: PropTypes.bool,
     };
   }
 
   static defaultProps = {
     children: {},
     router: {},
+    actions: {},
+    counties: [],
+    loadingCounties: false,
   }
 
   constructor(props) {
@@ -33,17 +59,31 @@ class App extends Component {
     this.state = {
 
     };
+    this.fetchCounties = this.fetchCounties.bind(this);
+  }
+
+  componentDidMount() {
+    this.fetchCounties();
+  }
+
+  fetchCounties() {
+    this.props.actions.fetchCounties();
   }
 
   render() {
-    const subProps = { test: 'hola', counties: ['County 1', 'County 2'] };
+    const { counties, loadingCounties } = this.props;
+    const sidebarProps = {
+      fetchCounties: this.fetchCounties,
+      counties,
+      loadingCounties,
+    };
     return (
       <div style={styles.app}>
         <Sidebar
-          sidebar={<SidebarContent {...subProps} />}
+          sidebar={<SidebarContent {...sidebarProps} />}
           docked
         >
-          {React.cloneElement(this.props.children, { ...subProps }) }
+          {React.cloneElement(this.props.children, { }) }
         </Sidebar>
       </div>
     );
@@ -56,4 +96,4 @@ const styles = {
   intro: {},
 };
 
-export default connect(null, mapDispatchToProps)(App);
+export default connect(mapStateToProps, mapDispatchToProps)(App);
