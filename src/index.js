@@ -13,6 +13,7 @@ import { syncHistoryWithStore } from 'react-router-redux';
 import reducer from './reducers';
 import App from './containers/App';
 import MainDashboard from './components/MainDashboard';
+import CountyData from './components/CountyData';
 
 /* eslint-disable */
 const DevTools = createDevTools(
@@ -39,6 +40,7 @@ ReactDOM.render(
         <Route path="/" component={App}>
           <IndexRedirect to="/main" />
           <Route path="/main" component={MainDashboard} />
+          <Route path="/county/:fips" component={CountyData} />
         </Route>
       </Router>
       <DevTools />

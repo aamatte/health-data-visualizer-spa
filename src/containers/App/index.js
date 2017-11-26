@@ -9,7 +9,7 @@ const mapDispatchToProps = (dispatch) => { //eslint-disable-line
   return {
     actions: {
       fetchCounties: pagination => dispatch(fetchCounties(pagination)),
-      fetchCountyData: (query, pagination) => dispatch(fetchCountyData(query, pagination)),
+      fetchCountyData: (query, pagination = {}) => dispatch(fetchCountyData(query, pagination)),
     },
   };
 };
@@ -43,6 +43,8 @@ class App extends Component {
       actions: PropTypes.object,
       counties: PropTypes.array,
       loadingCounties: PropTypes.bool,
+      selectedCounty: PropTypes.object,
+      countyData: PropTypes.object,
     };
   }
 
@@ -52,6 +54,8 @@ class App extends Component {
     actions: {},
     counties: [],
     loadingCounties: false,
+    selectedCounty: {},
+    countyData: {},
   }
 
   constructor(props) {
@@ -60,6 +64,7 @@ class App extends Component {
 
     };
     this.fetchCounties = this.fetchCounties.bind(this);
+    this.countySelected = this.countySelected.bind(this);
   }
 
   componentDidMount() {
@@ -70,12 +75,24 @@ class App extends Component {
     this.props.actions.fetchCounties();
   }
 
+  countySelected(county) {
+    this.props.actions.fetchCountyData({ county });
+    this.props.router.replace(`/county/${county.fips}`);
+  }
+
   render() {
-    const { counties, loadingCounties } = this.props;
+    const { counties, loadingCounties, selectedCounty, countyData, loadingCounty } = this.props;
+    console.log(this.props);
     const sidebarProps = {
       fetchCounties: this.fetchCounties,
+      countySelected: this.countySelected,
       counties,
       loadingCounties,
+    };
+    const countyDataProps = {
+      countyData,
+      selectedCounty,
+      loadingCounty,
     };
     return (
       <div style={styles.app}>
@@ -83,7 +100,7 @@ class App extends Component {
           sidebar={<SidebarContent {...sidebarProps} />}
           docked
         >
-          {React.cloneElement(this.props.children, { }) }
+          {React.cloneElement(this.props.children, { ...countyDataProps }) }
         </Sidebar>
       </div>
     );

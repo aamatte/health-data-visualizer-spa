@@ -5,6 +5,7 @@ import {
   FETCH_COUNTIES_REJECTED,
   FETCH_COUNTY_DATA_FULFILLED,
   FETCH_COUNTY_DATA_REJECTED,
+  FETCH_COUNTY_DATA_LOADING,
 } from '../constants';
 
 const BASE_URL = 'http://127.0.0.1:8080';
@@ -18,6 +19,11 @@ export function fetchCounties(pagination = {}) {
   };
 }
 
-export function fetchCountyData(query = {}, pagination = {}) {
-  // Do request and return FETCH_COUNTY_DATA_FULFILLED or FETCH_COUNTY_DATA_REJECTED
+export function fetchCountyData(query, pagination = {}) {
+  return (dispatch) => {
+    dispatch({ type: FETCH_COUNTY_DATA_LOADING, payload: query.county });
+    axios.get(`${BASE_URL}/diabetes-incidence?county=${query.county.county}&state=${query.county.state}`)
+      .then(response => dispatch({ type: FETCH_COUNTY_DATA_FULFILLED, payload: response.data }))
+      .catch(error => dispatch({ type: FETCH_COUNTY_DATA_REJECTED, payload: error }));
+  };
 }

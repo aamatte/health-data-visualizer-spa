@@ -1,4 +1,5 @@
 import React from 'react';
+import { PropTypes } from 'prop-types';
 import {
   Button,
   ButtonGroup,
@@ -7,11 +8,21 @@ import {
   Glyphicon,
 } from 'react-bootstrap';
 
-const SidebarContent = ({ counties, fetchCounties, loadingCounties }) => {
+const SidebarContent = ({
+  counties,
+  loadingCounties,
+  fetchCounties,
+  countySelected,
+}) => {
   const loading = loadingCounties;
   const countiesMapped = counties.map(county => (
-    <Button style={styles.item} key={county.fips}>
+    <Button
+      style={styles.item}
+      key={county.fips}
+      onClick={() => countySelected(county)}
+    >
       {county.county}
+      <small> {county.state} </small>
     </Button>
   ));
   return (
@@ -31,6 +42,18 @@ const SidebarContent = ({ counties, fetchCounties, loadingCounties }) => {
       }
     </div>
   );
+};
+
+SidebarContent.propTypes = {
+  counties: PropTypes.array,
+  fetchCounties: PropTypes.func,
+  loadingCounties: PropTypes.bool,
+};
+
+SidebarContent.defaultProps = {
+  counties: [],
+  fetchCounties: () => {},
+  loadingCounties: false,
 };
 
 const styles = {
