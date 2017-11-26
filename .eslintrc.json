@@ -10,7 +10,8 @@
           "experimentalObjectRestSpread": true,
           "jsx": true
       },
-      "sourceType": "module"
+      "sourceType": "module",
+      "experimentalDecorators": true
   },
   "plugins": [
       "react"
@@ -21,6 +22,7 @@
       "no-use-before-define": [0],
       "react/prefer-stateless-function": [1],
       "linebreak-style": ["error", "unix"],
-      "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }]      
+      "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+      "react/forbid-prop-types": [0]      
   }
 }
