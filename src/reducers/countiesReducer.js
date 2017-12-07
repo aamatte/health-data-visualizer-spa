@@ -9,7 +9,7 @@ import {
 
 const initialState = {
   selectedCounty: null,
-  countyData: {},
+  countyData: null,
   counties: [],
   favorites: [],
   error: null,
@@ -35,7 +35,7 @@ export default function update(state = initialState, action) {
       return { ...state, countyData: action.payload, loadingCounty: false };
     }
     case FETCH_COUNTY_DATA_REJECTED: {
-      return { ...state, error: action.payload.message, loadingCounty: false };
+      return { ...state, countyData: null, error: action.payload.message, loadingCounty: false };
     }
     default:
       return { ...state };

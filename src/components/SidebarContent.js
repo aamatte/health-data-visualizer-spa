@@ -48,12 +48,14 @@ SidebarContent.propTypes = {
   counties: PropTypes.array,
   fetchCounties: PropTypes.func,
   loadingCounties: PropTypes.bool,
+  countySelected: PropTypes.func,
 };
 
 SidebarContent.defaultProps = {
   counties: [],
   fetchCounties: () => {},
   loadingCounties: false,
+  countySelected: () => {},
 };
 
 const styles = {

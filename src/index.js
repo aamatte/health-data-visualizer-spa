@@ -40,7 +40,7 @@ ReactDOM.render(
         <Route path="/" component={App}>
           <IndexRedirect to="/main" />
           <Route path="/main" component={MainDashboard} />
-          <Route path="/county/:fips" component={CountyData} />
+          <Route path="/states/:state/counties/:county" component={CountyData} />
         </Route>
       </Router>
       <DevTools />

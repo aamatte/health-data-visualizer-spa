@@ -40,22 +40,28 @@ class App extends Component {
       // React Router
       children: PropTypes.object,
       router: PropTypes.object,
+      params: PropTypes.object,
+
       actions: PropTypes.object,
       counties: PropTypes.array,
       loadingCounties: PropTypes.bool,
       selectedCounty: PropTypes.object,
       countyData: PropTypes.object,
+      loadingCounty: PropTypes.bool,
     };
   }
 
   static defaultProps = {
     children: {},
     router: {},
+    params: {},
+
     actions: {},
     counties: [],
-    loadingCounties: false,
+    loadingCounties: true,
     selectedCounty: {},
-    countyData: {},
+    countyData: null,
+    loadingCounty: true,
   }
 
   constructor(props) {
@@ -68,7 +74,12 @@ class App extends Component {
   }
 
   componentDidMount() {
+    const { params } = this.props;
     this.fetchCounties();
+    if (params && params.state && params.county) {
+      const { state, county } = params;
+      this.props.actions.fetchCountyData({ county: { county, state } });
+    }
   }
 
   fetchCounties() {
@@ -77,12 +88,17 @@ class App extends Component {
 
   countySelected(county) {
     this.props.actions.fetchCountyData({ county });
-    this.props.router.replace(`/county/${county.fips}`);
+    this.props.router.replace(`/states/${county.state}/counties/${county.county}`);
   }
 
   render() {
-    const { counties, loadingCounties, selectedCounty, countyData, loadingCounty } = this.props;
-    console.log(this.props);
+    const {
+      counties,
+      loadingCounties,
+      selectedCounty,
+      countyData,
+      loadingCounty,
+    } = this.props;
     const sidebarProps = {
       fetchCounties: this.fetchCounties,
       countySelected: this.countySelected,
