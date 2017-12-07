@@ -15,6 +15,7 @@ const initialState = {
   error: null,
   loadingCounties: false,
   loadingCounty: false,
+  selectedInfo: 'diabetes-incidence',
 };
 
 export default function update(state = initialState, action) {
@@ -29,13 +30,23 @@ export default function update(state = initialState, action) {
       return { ...state, error: action.payload.message, loadingCounties: false };
     }
     case FETCH_COUNTY_DATA_LOADING: {
-      return { ...state, selectedCounty: action.payload, loadingCounty: true };
+      return {
+        ...state,
+        selectedCounty: action.payload.county,
+        selectedInfo: action.payload.source,
+        loadingCounty: true,
+      };
     }
     case FETCH_COUNTY_DATA_FULFILLED: {
       return { ...state, countyData: action.payload, loadingCounty: false };
     }
     case FETCH_COUNTY_DATA_REJECTED: {
-      return { ...state, countyData: null, error: action.payload.message, loadingCounty: false };
+      return {
+        ...state,
+        countyData: null,
+        error: action.payload.message,
+        loadingCounty: false,
+      };
     }
     default:
       return { ...state };

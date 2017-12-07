@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { 
+import {
   FETCH_COUNTIES_LOADING,
   FETCH_COUNTIES_FULFILLED,
   FETCH_COUNTIES_REJECTED,
@@ -19,10 +19,13 @@ export function fetchCounties(pagination = {}) {
   };
 }
 
-export function fetchCountyData(query, pagination = {}) {
+export function fetchCountyData(query, source = 'diabetes-incidence', pagination = {}) {
   return (dispatch) => {
-    dispatch({ type: FETCH_COUNTY_DATA_LOADING, payload: query.county });
-    axios.get(`${BASE_URL}/diabetes-incidence?county=${query.county.county}&state=${query.county.state}`)
+    dispatch({
+      type: FETCH_COUNTY_DATA_LOADING,
+      payload: { county: query.county, source },
+    });
+    axios.get(`${BASE_URL}/${source}?county=${query.county.county}&state=${query.county.state}`)
       .then(response => dispatch({ type: FETCH_COUNTY_DATA_FULFILLED, payload: response.data }))
       .catch(error => dispatch({ type: FETCH_COUNTY_DATA_REJECTED, payload: error }));
   };
