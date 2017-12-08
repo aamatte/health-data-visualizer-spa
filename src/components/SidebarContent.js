@@ -6,6 +6,7 @@ import {
   FormControl,
   FormGroup,
   Glyphicon,
+  Pagination,
 } from 'react-bootstrap';
 
 class SidebarContent extends Component {
@@ -13,14 +14,28 @@ class SidebarContent extends Component {
     super(props);
     this.state = {
       searchValue: '',
+      activePage: 1,
     };
+    this.handlePageSelect = this.handlePageSelect.bind(this);
+    this.fetchCounties = this.fetchCounties.bind(this);
+  }
+
+  fetchCounties(query) {
+    this.setState({ activePage: 1 });
+    this.props.fetchCounties(query);
+  }
+
+  handlePageSelect(eventKey) {
+    this.setState({
+      activePage: eventKey,
+    });
+    this.props.fetchCounties({}, { page: eventKey - 1, perPage: 20 });
   }
 
   render() {
     const {
       counties,
       loadingCounties,
-      fetchCounties,
       countySelected,
     } = this.props;
     const loading = loadingCounties;
@@ -48,7 +63,7 @@ class SidebarContent extends Component {
               onChange={e => this.setState({ searchValue: e.target.value })}
             />
             <Glyphicon
-              onClick={() => fetchCounties(query)}
+              onClick={() => this.fetchCounties(query)}
               style={styles.searchButton}
               glyph="search"
             />
@@ -58,6 +73,18 @@ class SidebarContent extends Component {
         {!loading &&
           <ButtonGroup vertical block>
             {countiesMapped}
+            {counties.length <= 20 &&
+              <Pagination
+                style={styles.pagination}
+                prev
+                next
+                ellipsis
+                items={counties.length >= 20 ? 160 : 1}
+                maxButtons={3}
+                activePage={this.state.activePage}
+                onSelect={this.handlePageSelect}
+              />
+            }
           </ButtonGroup>
         }
       </div>
@@ -102,6 +129,9 @@ const styles = {
   },
   loading: {
     margin: 20,
+  },
+  pagination: {
+    maxWidth: '100%',
   },
 };
 

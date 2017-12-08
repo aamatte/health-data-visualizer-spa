@@ -15,7 +15,7 @@ const availableInformation = [
 const mapDispatchToProps = (dispatch) => { //eslint-disable-line
   return {
     actions: {
-      fetchCounties: pagination => dispatch(fetchCounties(pagination)),
+      fetchCounties: (query, pagination) => dispatch(fetchCounties(query, pagination)),
       fetchCountyData: (query, source, pagination = {}) => dispatch(fetchCountyData(query, source, pagination)),
     },
   };
@@ -93,8 +93,8 @@ class App extends Component {
     }
   }
 
-  fetchCounties(query) {
-    this.props.actions.fetchCounties(query);
+  fetchCounties(query, pagination) {
+    this.props.actions.fetchCounties(query, pagination);
   }
 
   countySelected(county) {
@@ -134,6 +134,7 @@ class App extends Component {
     return (
       <div style={styles.app}>
         <Sidebar
+          style={styles.sidebar}
           sidebar={<SidebarContent {...sidebarProps} />}
           docked
         >
@@ -146,8 +147,7 @@ class App extends Component {
 
 const styles = {
   app: {},
-  title: {},
-  intro: {},
+  sidebar: {},
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);
