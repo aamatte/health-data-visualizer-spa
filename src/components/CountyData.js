@@ -28,6 +28,26 @@ const DataTable = ({ countyData, rowSelected }) => {
 };
 
 class CountyData extends Component {
+  static get propTypes() {
+    return {
+      selectedCounty: PropTypes.object,
+      countyData: PropTypes.object,
+      loadingCounty: PropTypes.bool,
+      availableInformation: PropTypes.object,
+      selectCountyData: PropTypes.func,
+      selectedInfo: PropTypes.string,
+    };
+  }
+
+  static defaultProps = {
+    selectedCounty: null,
+    countyData: { years: [], labels: [], data: [] },
+    loadingCounty: true,
+    availableInformation: {},
+    selectCountyData: () => {},
+    selectedInfo: '',
+  }
+
   constructor(props) {
     super(props);
     this.state = {
