@@ -51,6 +51,26 @@ class CountyData extends Component {
     selectedInfo: '',
   }
 
+  static parseData(countyData, selectedRow) {
+    // name: label name, data: data to be displayed
+    const parsedData = [{ name: '', data: {} }];
+    if (countyData) {
+      const { years, labels, data } = countyData;
+      const name = labels[selectedRow];
+      parsedData[0].name = name;
+      const labelData = {};
+      years.forEach((year) => {
+        const yearData = data[0][year];
+        if (yearData) {
+          const yearValue = data[0][year][selectedRow];
+          labelData[year] = yearValue;
+        }
+      });
+      parsedData[0].data = labelData;
+    }
+    return parsedData;
+  }
+
   constructor(props) {
     super(props);
     this.state = {
@@ -72,25 +92,8 @@ class CountyData extends Component {
       loadingCounty,
       selectedInfo,
     } = this.props;
-
     const { selectedRow } = this.state;
-
-    // name: label name, data: data to be displayed
-    const parsedData = [{ name: '', data: {} }];
-    if (!loadingCounty && countyData) {
-      const { years, labels, data } = countyData;
-      const name = labels[selectedRow];
-      parsedData[0].name = name;
-      const labelData = {};
-      years.forEach((year) => {
-        const yearData = data[0][year];
-        if (yearData) {
-          const yearValue = data[0][year][selectedRow];
-          labelData[year] = yearValue;
-        }
-      });
-      parsedData[0].data = labelData;
-    }
+    const parsedData = loadingCounty ? { } : CountyData.parseData(countyData, selectedRow);
     const activeData = availableInformation.find(i => i.path === selectedInfo);
     return (
       <Grid>
