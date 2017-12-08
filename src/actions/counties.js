@@ -10,10 +10,13 @@ import {
 
 const BASE_URL = 'http://127.0.0.1:8080';
 
-export function fetchCounties(pagination = {}) {
+export function fetchCounties(query = {}, pagination = {}) {
+  const stateQuery = query.state ? `state=${query.state}` : '';
+  const countyQuery = query.county ? `county=${query.county}` : '';
+  const queryString = `?${stateQuery}&${countyQuery}`;
   return (dispatch) => {
     dispatch({ type: FETCH_COUNTIES_LOADING });
-    axios.get(`${BASE_URL}/counties`)
+    axios.get(`${BASE_URL}/counties${queryString}`)
       .then(response => dispatch({ type: FETCH_COUNTIES_FULFILLED, payload: response.data }))
       .catch(error => dispatch({ type: FETCH_COUNTIES_REJECTED, payload: error }));
   };

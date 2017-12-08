@@ -93,8 +93,8 @@ class App extends Component {
     }
   }
 
-  fetchCounties() {
-    this.props.actions.fetchCounties();
+  fetchCounties(query) {
+    this.props.actions.fetchCounties(query);
   }
 
   countySelected(county) {

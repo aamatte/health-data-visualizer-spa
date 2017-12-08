@@ -3,10 +3,13 @@ import PropTypes from 'prop-types';
 import { Grid, Table, Nav, NavItem } from 'react-bootstrap';
 import { LineChart } from 'react-chartkick';
 
-const DataTable = ({ countyData, rowSelected }) => {
+const DataTable = ({ countyData, rowSelected, selectedRow }) => {
   const { years, labels, data } = countyData;
   const tableBody = labels.map((label, index) => (
-    <tr style={styles.tableRow} onClick={() => rowSelected(index)}>
+    <tr
+      style={selectedRow === index ? styles.selectedTableRow : styles.tableRow}
+      onClick={() => rowSelected(index)}
+    >
       <td> {label} </td>
       {years.map(year => <td> {data[0][year][index]}</td>)}
     </tr>
@@ -53,6 +56,12 @@ class CountyData extends Component {
     this.state = {
       selectedRow: 0,
     };
+    this.selectCountyData = this.selectCountyData.bind(this);
+  }
+
+  selectCountyData(key) {
+    this.setState({ selectedRow: 0 });
+    this.props.selectCountyData(key);
   }
 
   render() {
@@ -61,7 +70,6 @@ class CountyData extends Component {
       countyData,
       availableInformation,
       loadingCounty,
-      selectCountyData,
       selectedInfo,
     } = this.props;
 
@@ -91,7 +99,12 @@ class CountyData extends Component {
             <h1> {selectedCounty.county} </h1>
             <h4> {selectedCounty.state} </h4>
             <br />
-            <Nav bsStyle="tabs" justified activeKey={activeData.key} onSelect={selectCountyData}>
+            <Nav
+              bsStyle="tabs"
+              justified
+              activeKey={activeData.key}
+              onSelect={this.selectCountyData}
+            >
               {availableInformation.map(info => (
                 <NavItem key={info.key} eventKey={info.key}>{info.name}</NavItem>
               ))}
@@ -103,6 +116,7 @@ class CountyData extends Component {
                 <DataTable
                   countyData={countyData}
                   rowSelected={index => this.setState({ selectedRow: index })}
+                  selectedRow={selectedRow}
                 />
                 <LineChart data={parsedData} />
               </div> }
@@ -131,6 +145,10 @@ CountyData.defaultProps = {
 const styles = {
   tableRow: {
     cursor: 'pointer',
+  },
+  selectedTableRow: {
+    cursor: 'pointer',
+    backgroundColor: 'lightgray',
   },
 };
 

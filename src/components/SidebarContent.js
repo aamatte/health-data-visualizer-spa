@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { PropTypes } from 'prop-types';
 import {
   Button,
@@ -8,41 +8,62 @@ import {
   Glyphicon,
 } from 'react-bootstrap';
 
-const SidebarContent = ({
-  counties,
-  loadingCounties,
-  fetchCounties,
-  countySelected,
-}) => {
-  const loading = loadingCounties;
-  const countiesMapped = counties.map(county => (
-    <Button
-      style={styles.item}
-      key={county.fips}
-      onClick={() => countySelected(county)}
-    >
-      {county.county}
-      <small> {county.state} </small>
-    </Button>
-  ));
-  return (
-    <div>
-      <div style={styles.container}>
-        <h2 align="center" style={styles.title}>Counties</h2>
-        <FormGroup style={styles.search}>
-          <FormControl style={styles.searchInput} type="text" placeholder="Search" />
-          <Glyphicon onClick={() => fetchCounties()} style={styles.searchButton} glyph="search" />
-        </FormGroup>
+class SidebarContent extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      searchValue: '',
+    };
+  }
+
+  render() {
+    const {
+      counties,
+      loadingCounties,
+      fetchCounties,
+      countySelected,
+    } = this.props;
+    const loading = loadingCounties;
+    const countiesMapped = counties.map(county => (
+      <Button
+        style={styles.item}
+        key={county.fips}
+        onClick={() => countySelected(county)}
+      >
+        {county.county}
+        <small> {county.state} </small>
+      </Button>
+    ));
+    const query = { county: this.state.searchValue, state: this.state.searchValue };
+    return (
+      <div>
+        <div style={styles.container}>
+          <h2 align="center" style={styles.title}>Counties</h2>
+          <FormGroup style={styles.search}>
+            <FormControl
+              style={styles.searchInput}
+              type="text"
+              placeholder="Search"
+              value={this.state.searchValue}
+              onChange={e => this.setState({ searchValue: e.target.value })}
+            />
+            <Glyphicon
+              onClick={() => fetchCounties(query)}
+              style={styles.searchButton}
+              glyph="search"
+            />
+          </FormGroup>
+        </div>
+        {loading && <p style={styles.loading}> Loading... </p>}
+        {!loading &&
+          <ButtonGroup vertical block>
+            {countiesMapped}
+          </ButtonGroup>
+        }
       </div>
-      {loading && <p style={styles.loading}> Loading... </p>}
-      {!loading &&
-        <ButtonGroup vertical block>
-          {countiesMapped}
-        </ButtonGroup>
-      }
-    </div>
-  );
-};
+    );
+  }
+}
 
 SidebarContent.propTypes = {
   counties: PropTypes.array,
