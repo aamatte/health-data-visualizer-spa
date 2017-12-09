@@ -30,7 +30,7 @@ The SPA has the following features:
 
 ```sh
 # Clone the project
-git clone GIT_REPO health-data-spa
+git clone https://github.com/aamatte/health-data-visualizer-spa.git health-data-spa
 cd health-data-spa
 
 # Install dependencies
