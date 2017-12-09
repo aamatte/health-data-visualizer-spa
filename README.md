@@ -27,6 +27,7 @@ The SPA has the following features:
 
 ## Getting started
 
+You will need the [Helth data API](https://github.com/aamatte/health-data-visualizer-api) running on localhost, port 8080.
 
 ```sh
 # Clone the project
