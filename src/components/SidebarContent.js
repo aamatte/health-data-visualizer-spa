@@ -42,7 +42,7 @@ class SidebarContent extends Component {
   }
 
   searchCounties(searchValue) {
-    // Whent length is zero, just search everything, and a one character query is too short
+    // When length is zero, just search everything, and a one character query is too short
     if (searchValue.length !== 1) {
       const query = { county: searchValue, state: searchValue };
       this.fetchCounties(query);
@@ -74,6 +74,7 @@ class SidebarContent extends Component {
     return (
       <div>
         <div style={styles.container}>
+          {/* Search bar */}
           <FormGroup style={styles.search}>
             <FormControl
               style={styles.searchInput}
@@ -98,6 +99,7 @@ class SidebarContent extends Component {
           </Nav>
         </div>
         {loading && <p style={styles.sidebarNotice}> Loading... </p>}
+        {/* List of counties */}
         {!loading &&
           <ButtonGroup vertical block>
             {displayCounties.length > 0 && countiesMapped}

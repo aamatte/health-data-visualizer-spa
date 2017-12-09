@@ -8,7 +8,7 @@
     "prop-types": "15.6.0",
     "react": "^16.1.1",
     "react-bootstrap": "^0.31.5",
-    "react-chartkick": "^0.1.4",
+    "react-chartkick": "^0.1.5",
     "react-dom": "^16.1.1",
     "react-redux": "^5.0.6",
     "react-router": "3.2.0",

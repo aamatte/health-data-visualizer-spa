@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Health data visualizer",
+  "name": "Health data visualizer by county",
   "icons": [
     {
       "src": "favicon.ico",

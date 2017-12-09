@@ -31,6 +31,7 @@ class CountyData extends Component {
     removeFromFavorites: () => {},
   }
 
+  // Parse the data to the accepted format by LineChart
   static parseData(countyData, selectedRow) {
     // name: label name, data: data to be displayed
     const parsedData = [{ name: '', data: {} }];
@@ -54,6 +55,7 @@ class CountyData extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      // Selected data row to be displayed
       selectedRow: 0,
     };
     this.selectCountyData = this.selectCountyData.bind(this);
@@ -91,6 +93,7 @@ class CountyData extends Component {
       <Grid>
         {selectedCounty &&
           <div>
+            {/* Header */}
             <Row style={styles.header}>
               <Col sm={9}>
                 <h1> {selectedCounty.county} </h1>
@@ -105,6 +108,7 @@ class CountyData extends Component {
               </Col>
             </Row>
             <br />
+            {/* Tabs showing available indicators */}
             <Nav
               bsStyle="tabs"
               justified
@@ -116,7 +120,7 @@ class CountyData extends Component {
               ))}
             </Nav>
             <br />
-
+            {/* Indicators of the selected county */}
             {!loadingCounty &&
               <div>
                 <DataTable

@@ -21,6 +21,7 @@ const initialState = {
   loadingCounties: false,
   loadingCounty: false,
   selectedInfo: null,
+  // Favorites are saved in localStorage
   favorites: localStorage.getItem(FAVORITES_KEY) ? JSON.parse(localStorage.getItem(FAVORITES_KEY)) : [],
   availableData: [],
 };

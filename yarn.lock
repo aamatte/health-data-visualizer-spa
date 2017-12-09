@@ -5242,9 +5242,9 @@ react-bootstrap@^0.31.5:
     uncontrollable "^4.1.0"
     warning "^3.0.0"
 
-react-chartkick@^0.1.4:
-  version "0.1.4"
-  resolved "https://registry.yarnpkg.com/react-chartkick/-/react-chartkick-0.1.4.tgz#11cc7fb648c71a003dc325ecc8a8e2121092a8e2"
+react-chartkick@^0.1.5:
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/react-chartkick/-/react-chartkick-0.1.5.tgz#3da6ef825f0a7dd30ce6e11b8ef498718f50fd07"
 
 react-dev-utils@^4.2.1:
   version "4.2.1"

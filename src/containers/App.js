@@ -8,8 +8,8 @@ import {
   addToFavorites,
   removeFromFavorites,
   fetchAvailableData,
-} from '../../actions/counties';
-import SidebarContent from '../../components/SidebarContent';
+} from '../actions/counties';
+import SidebarContent from '../components/SidebarContent';
 
 const mapDispatchToProps = (dispatch) => { //eslint-disable-line
   return {
