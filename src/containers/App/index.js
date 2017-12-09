@@ -7,15 +7,9 @@ import {
   fetchCountyData,
   addToFavorites,
   removeFromFavorites,
+  fetchAvailableData,
 } from '../../actions/counties';
 import SidebarContent from '../../components/SidebarContent';
-
-const availableInformation = [
-  { key: 1, path: 'diabetes-incidence', name: 'Diabetes incidende' },
-  { key: 2, path: 'diabetes-prevalence', name: 'Diabetes prevalence' },
-  { key: 3, path: 'obesity-prevalence', name: 'Obesity prevalence' },
-  { key: 4, path: 'physical-inactivity', name: 'Physical inactivity' },
-];
 
 const mapDispatchToProps = (dispatch) => { //eslint-disable-line
   return {
@@ -24,6 +18,7 @@ const mapDispatchToProps = (dispatch) => { //eslint-disable-line
       fetchCountyData: (query, source, pagination = {}) => dispatch(fetchCountyData(query, source, pagination)),
       addToFavorites: county => dispatch(addToFavorites(county)),
       removeFromFavorites: county => dispatch(removeFromFavorites(county)),
+      fetchAvailableData: () => dispatch(fetchAvailableData()),
     },
   };
 };
@@ -37,6 +32,7 @@ const mapStateToProps = (state) => {
     loadingCounties,
     loadingCounty,
     selectedInfo,
+    availableData,
   } = state.counties;
 
   return {
@@ -47,6 +43,7 @@ const mapStateToProps = (state) => {
     loadingCounties,
     loadingCounty,
     selectedInfo,
+    availableData,
   };
 };
 
@@ -66,6 +63,7 @@ class App extends Component {
       loadingCounty: PropTypes.bool,
       selectedInfo: PropTypes.string,
       favorites: PropTypes.array,
+      availableData: PropTypes.array,
     };
   }
 
@@ -81,13 +79,15 @@ class App extends Component {
     selectedCounty: {},
     countyData: null,
     loadingCounty: true,
-    selectedInfo: availableInformation[0].path,
+    selectedInfo: null,
+    availableData: [],
     favorites: [],
   }
 
   constructor(props) {
     super(props);
     this.fetchCounties = this.fetchCounties.bind(this);
+    this.fetchAvailableData = this.fetchAvailableData.bind(this);
     this.countySelected = this.countySelected.bind(this);
     this.selectCountyData = this.selectCountyData.bind(this);
     this.addToFavorites = this.addToFavorites.bind(this);
@@ -97,6 +97,7 @@ class App extends Component {
   componentDidMount() {
     const { params } = this.props;
     this.fetchCounties();
+    this.fetchAvailableData();
     if (params && params.state && params.county) {
       const { state, county } = params;
       this.props.actions.fetchCountyData({
@@ -109,14 +110,18 @@ class App extends Component {
     this.props.actions.fetchCounties(query, pagination);
   }
 
+  fetchAvailableData() {
+    this.props.actions.fetchAvailableData();
+  }
+
   countySelected(county) {
     this.props.actions.fetchCountyData({ county });
     this.props.router.replace(`/states/${county.state}/counties/${county.county}`);
   }
 
   selectCountyData(key) {
-    const { selectedCounty } = this.props;
-    const info = availableInformation.find(i => i.key === key);
+    const { selectedCounty, availableData } = this.props;
+    const info = availableData.find(i => i.key === key);
     this.props.actions.fetchCountyData({ county: selectedCounty }, info.path);
   }
 
@@ -137,6 +142,7 @@ class App extends Component {
       loadingCounty,
       selectedInfo,
       favorites,
+      availableData,
     } = this.props;
     const sidebarProps = {
       fetchCounties: this.fetchCounties,
@@ -148,7 +154,7 @@ class App extends Component {
     const countyDataProps = {
       countyData,
       selectedCounty,
-      availableInformation,
+      availableData,
       loadingCounty,
       selectedInfo,
       selectCountyData: this.selectCountyData,

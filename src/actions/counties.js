@@ -8,6 +8,8 @@ import {
   FETCH_COUNTY_DATA_LOADING,
   ADD_COUNTY_TO_FAVORITES,
   REMOVE_COUNTY_FROM_FAVORITES,
+  FETCH_AVAILABLE_DATA_FULFILLED,
+  FETCH_AVAILABLE_DATA_REJECTED,
 } from '../constants';
 
 const BASE_URL = 'http://127.0.0.1:8080';
@@ -53,4 +55,12 @@ export function removeFromFavorites(county) {
       payload: { county },
     });
   });
+}
+
+export function fetchAvailableData() {
+  return (dispatch) => {
+    axios.get(`${BASE_URL}/available-data`)
+      .then(response => dispatch({ type: FETCH_AVAILABLE_DATA_FULFILLED, payload: response.data }))
+      .catch(error => dispatch({ type: FETCH_AVAILABLE_DATA_REJECTED, payload: error }));
+  };
 }

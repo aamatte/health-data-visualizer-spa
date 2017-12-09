@@ -7,6 +7,8 @@ import {
   FETCH_COUNTY_DATA_REJECTED,
   ADD_COUNTY_TO_FAVORITES,
   REMOVE_COUNTY_FROM_FAVORITES,
+  FETCH_AVAILABLE_DATA_FULFILLED,
+  FETCH_AVAILABLE_DATA_REJECTED,
 } from '../constants';
 
 const FAVORITES_KEY = 'favorites';
@@ -18,8 +20,9 @@ const initialState = {
   error: null,
   loadingCounties: false,
   loadingCounty: false,
-  selectedInfo: 'diabetes-incidence',
+  selectedInfo: null,
   favorites: localStorage.getItem(FAVORITES_KEY) ? JSON.parse(localStorage.getItem(FAVORITES_KEY)) : [],
+  availableData: [],
 };
 
 export default function update(state = initialState, action) {
@@ -81,6 +84,18 @@ export default function update(state = initialState, action) {
       return {
         ...state,
         favorites: updatedFavorites,
+      };
+    }
+    case FETCH_AVAILABLE_DATA_FULFILLED: {
+      return {
+        ...state,
+        availableData: action.payload,
+      };
+    }
+    case FETCH_AVAILABLE_DATA_REJECTED: {
+      return {
+        ...state,
+        error: action.payload,
       };
     }
     default:

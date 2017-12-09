@@ -10,7 +10,7 @@ class CountyData extends Component {
       selectedCounty: PropTypes.object,
       countyData: PropTypes.object,
       loadingCounty: PropTypes.bool,
-      availableInformation: PropTypes.array,
+      availableData: PropTypes.array,
       selectCountyData: PropTypes.func,
       selectedInfo: PropTypes.string,
       favorites: PropTypes.array,
@@ -23,7 +23,7 @@ class CountyData extends Component {
     selectedCounty: null,
     countyData: { years: [], labels: [], data: [] },
     loadingCounty: true,
-    availableInformation: {},
+    availableData: {},
     selectCountyData: () => {},
     selectedInfo: '',
     favorites: [],
@@ -78,14 +78,14 @@ class CountyData extends Component {
     const {
       selectedCounty,
       countyData,
-      availableInformation,
+      availableData,
       loadingCounty,
       selectedInfo,
       favorites,
     } = this.props;
     const { selectedRow } = this.state;
     const parsedData = loadingCounty ? { } : CountyData.parseData(countyData, selectedRow);
-    const activeData = availableInformation.find(i => i.path === selectedInfo);
+    const activeData = availableData.find(i => i.path === selectedInfo);
     const favorite = selectedCounty && favorites.find(f => f.fips === selectedCounty.fips);
     return (
       <Grid>
@@ -108,10 +108,10 @@ class CountyData extends Component {
             <Nav
               bsStyle="tabs"
               justified
-              activeKey={activeData.key}
+              activeKey={activeData ? activeData.key : 1}
               onSelect={this.selectCountyData}
             >
-              {availableInformation.map(info => (
+              {availableData.map(info => (
                 <NavItem key={info.key} eventKey={info.key}>{info.name}</NavItem>
               ))}
             </Nav>
