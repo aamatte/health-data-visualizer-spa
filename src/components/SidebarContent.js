@@ -7,7 +7,14 @@ import {
   FormGroup,
   Glyphicon,
   Pagination,
+  Nav,
+  NavItem,
+  Badge,
 } from 'react-bootstrap';
+
+// Source: https://en.wikipedia.org/wiki/County_(United_States)
+const NUMBER_OF_COUNTIES = 3142;
+const COUNTIES_PER_PAGE = 20;
 
 class SidebarContent extends Component {
   constructor(props) {
@@ -15,9 +22,11 @@ class SidebarContent extends Component {
     this.state = {
       searchValue: '',
       activePage: 1,
+      activeTab: 'all-counties',
     };
     this.handlePageSelect = this.handlePageSelect.bind(this);
     this.fetchCounties = this.fetchCounties.bind(this);
+    this.searchCounties = this.searchCounties.bind(this);
   }
 
   fetchCounties(query) {
@@ -29,7 +38,15 @@ class SidebarContent extends Component {
     this.setState({
       activePage: eventKey,
     });
-    this.props.fetchCounties({}, { page: eventKey - 1, perPage: 20 });
+    this.props.fetchCounties({}, { page: eventKey - 1, perPage: COUNTIES_PER_PAGE });
+  }
+
+  searchCounties(searchValue) {
+    // Whent length is zero, just search everything, and a one character query is too short
+    if (searchValue.length !== 1) {
+      const query = { county: searchValue, state: searchValue };
+      this.fetchCounties(query);
+    }
   }
 
   render() {
@@ -37,23 +54,26 @@ class SidebarContent extends Component {
       counties,
       loadingCounties,
       countySelected,
+      favorites,
     } = this.props;
+    const { searchValue, activeTab } = this.state;
+
     const loading = loadingCounties;
-    const countiesMapped = counties.map(county => (
+    const displayCounties = activeTab === 'all-counties' ? counties : favorites;
+    const countiesMapped = displayCounties.map(county => (
       <Button
         style={styles.item}
         key={county.fips}
         onClick={() => countySelected(county)}
       >
-        {county.county}
+        {county.county},
         <small> {county.state} </small>
       </Button>
     ));
-    const query = { county: this.state.searchValue, state: this.state.searchValue };
+    const pages = counties.length >= COUNTIES_PER_PAGE ? parseInt(NUMBER_OF_COUNTIES / COUNTIES_PER_PAGE, 10) : 1;
     return (
       <div>
         <div style={styles.container}>
-          <h2 align="center" style={styles.title}>Counties</h2>
           <FormGroup style={styles.search}>
             <FormControl
               style={styles.searchInput}
@@ -63,23 +83,32 @@ class SidebarContent extends Component {
               onChange={e => this.setState({ searchValue: e.target.value })}
             />
             <Glyphicon
-              onClick={() => this.fetchCounties(query)}
+              onClick={() => this.searchCounties(searchValue)}
               style={styles.searchButton}
               glyph="search"
             />
           </FormGroup>
+          <Nav
+            bsStyle="tabs"
+            activeKey={activeTab}
+            onSelect={eventKey => this.setState({ activeTab: eventKey })}
+          >
+            <NavItem eventKey="all-counties">Counties</NavItem>
+            <NavItem eventKey="favorites"> Favorites <Badge>{favorites.length}</Badge></NavItem>
+          </Nav>
         </div>
-        {loading && <p style={styles.loading}> Loading... </p>}
+        {loading && <p style={styles.sidebarNotice}> Loading... </p>}
         {!loading &&
           <ButtonGroup vertical block>
-            {countiesMapped}
-            {counties.length <= 20 &&
+            {displayCounties.length > 0 && countiesMapped}
+            {displayCounties.length === 0 && <p style={styles.sidebarNotice}> Nothing to show </p>}
+            {displayCounties.length === COUNTIES_PER_PAGE &&
               <Pagination
                 style={styles.pagination}
                 prev
                 next
                 ellipsis
-                items={counties.length >= 20 ? 160 : 1}
+                items={pages}
                 maxButtons={3}
                 activePage={this.state.activePage}
                 onSelect={this.handlePageSelect}
@@ -97,6 +126,7 @@ SidebarContent.propTypes = {
   fetchCounties: PropTypes.func,
   loadingCounties: PropTypes.bool,
   countySelected: PropTypes.func,
+  favorites: PropTypes.array,
 };
 
 SidebarContent.defaultProps = {
@@ -104,6 +134,7 @@ SidebarContent.defaultProps = {
   fetchCounties: () => {},
   loadingCounties: false,
   countySelected: () => {},
+  favorites: [],
 };
 
 const styles = {
@@ -127,7 +158,7 @@ const styles = {
     display: 'inline',
     cursor: 'pointer',
   },
-  loading: {
+  sidebarNotice: {
     margin: 20,
   },
   pagination: {

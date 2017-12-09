@@ -6,6 +6,8 @@ import {
   FETCH_COUNTY_DATA_FULFILLED,
   FETCH_COUNTY_DATA_REJECTED,
   FETCH_COUNTY_DATA_LOADING,
+  ADD_COUNTY_TO_FAVORITES,
+  REMOVE_COUNTY_FROM_FAVORITES,
 } from '../constants';
 
 const BASE_URL = 'http://127.0.0.1:8080';
@@ -33,4 +35,22 @@ export function fetchCountyData(query, source = 'diabetes-incidence') {
       .then(response => dispatch({ type: FETCH_COUNTY_DATA_FULFILLED, payload: response.data }))
       .catch(error => dispatch({ type: FETCH_COUNTY_DATA_REJECTED, payload: error }));
   };
+}
+
+export function addToFavorites(county) {
+  return ((dispatch) => {
+    dispatch({
+      type: ADD_COUNTY_TO_FAVORITES,
+      payload: { county },
+    });
+  });
+}
+
+export function removeFromFavorites(county) {
+  return ((dispatch) => {
+    dispatch({
+      type: REMOVE_COUNTY_FROM_FAVORITES,
+      payload: { county },
+    });
+  });
 }

@@ -2,7 +2,12 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { PropTypes } from 'prop-types';
 import Sidebar from 'react-sidebar';
-import { fetchCounties, fetchCountyData } from '../../actions/counties';
+import {
+  fetchCounties,
+  fetchCountyData,
+  addToFavorites,
+  removeFromFavorites,
+} from '../../actions/counties';
 import SidebarContent from '../../components/SidebarContent';
 
 const availableInformation = [
@@ -17,6 +22,8 @@ const mapDispatchToProps = (dispatch) => { //eslint-disable-line
     actions: {
       fetchCounties: (query, pagination) => dispatch(fetchCounties(query, pagination)),
       fetchCountyData: (query, source, pagination = {}) => dispatch(fetchCountyData(query, source, pagination)),
+      addToFavorites: county => dispatch(addToFavorites(county)),
+      removeFromFavorites: county => dispatch(removeFromFavorites(county)),
     },
   };
 };
@@ -58,10 +65,12 @@ class App extends Component {
       countyData: PropTypes.object,
       loadingCounty: PropTypes.bool,
       selectedInfo: PropTypes.string,
+      favorites: PropTypes.array,
     };
   }
 
   static defaultProps = {
+    // React router
     children: {},
     router: {},
     params: {},
@@ -72,7 +81,8 @@ class App extends Component {
     selectedCounty: {},
     countyData: null,
     loadingCounty: true,
-    selectedInfo: 'diabetes-incidence',
+    selectedInfo: availableInformation[0].path,
+    favorites: [],
   }
 
   constructor(props) {
@@ -80,6 +90,8 @@ class App extends Component {
     this.fetchCounties = this.fetchCounties.bind(this);
     this.countySelected = this.countySelected.bind(this);
     this.selectCountyData = this.selectCountyData.bind(this);
+    this.addToFavorites = this.addToFavorites.bind(this);
+    this.removeFromFavorites = this.removeFromFavorites.bind(this);
   }
 
   componentDidMount() {
@@ -108,6 +120,14 @@ class App extends Component {
     this.props.actions.fetchCountyData({ county: selectedCounty }, info.path);
   }
 
+  addToFavorites(county) {
+    this.props.actions.addToFavorites(county);
+  }
+
+  removeFromFavorites(county) {
+    this.props.actions.removeFromFavorites(county);
+  }
+
   render() {
     const {
       counties,
@@ -116,12 +136,14 @@ class App extends Component {
       countyData,
       loadingCounty,
       selectedInfo,
+      favorites,
     } = this.props;
     const sidebarProps = {
       fetchCounties: this.fetchCounties,
       countySelected: this.countySelected,
       counties,
       loadingCounties,
+      favorites,
     };
     const countyDataProps = {
       countyData,
@@ -130,6 +152,9 @@ class App extends Component {
       loadingCounty,
       selectedInfo,
       selectCountyData: this.selectCountyData,
+      favorites,
+      addToFavorites: this.addToFavorites,
+      removeFromFavorites: this.removeFromFavorites,
     };
     return (
       <div style={styles.app}>

@@ -38,8 +38,8 @@ ReactDOM.render(
     <div>
       <Router history={history}>
         <Route path="/" component={App}>
-          <IndexRedirect to="/main" />
-          <Route path="/main" component={MainDashboard} />
+          <IndexRedirect to="/dashboard" />
+          <Route path="/dashboard" component={MainDashboard} />
           <Route path="/states/:state/counties/:county" component={CountyData} />
         </Route>
       </Router>

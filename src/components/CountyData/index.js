@@ -1,34 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Grid, Table, Nav, NavItem } from 'react-bootstrap';
+import { Grid, Nav, NavItem, Glyphicon, Row, Col } from 'react-bootstrap';
 import { LineChart } from 'react-chartkick';
-
-const DataTable = ({ countyData, rowSelected, selectedRow }) => {
-  const { years, labels, data } = countyData;
-  const tableBody = labels.map((label, index) => (
-    <tr
-      style={selectedRow === index ? styles.selectedTableRow : styles.tableRow}
-      onClick={() => rowSelected(index)}
-    >
-      <td> {label} </td>
-      {years.map(year => <td> {data[0][year][index]}</td>)}
-    </tr>
-  ));
-
-  return (
-    <Table responsive hover>
-      <thead>
-        <tr>
-          <th />
-          {countyData.years.map(year => <th key={year}>{year}</th>)}
-        </tr>
-      </thead>
-      <tbody>
-        {tableBody}
-      </tbody>
-    </Table>
-  );
-};
+import DataTable from './DataTable';
 
 class CountyData extends Component {
   static get propTypes() {
@@ -36,9 +10,12 @@ class CountyData extends Component {
       selectedCounty: PropTypes.object,
       countyData: PropTypes.object,
       loadingCounty: PropTypes.bool,
-      availableInformation: PropTypes.object,
+      availableInformation: PropTypes.array,
       selectCountyData: PropTypes.func,
       selectedInfo: PropTypes.string,
+      favorites: PropTypes.array,
+      addToFavorites: PropTypes.func,
+      removeFromFavorites: PropTypes.func,
     };
   }
 
@@ -49,6 +26,9 @@ class CountyData extends Component {
     availableInformation: {},
     selectCountyData: () => {},
     selectedInfo: '',
+    favorites: [],
+    addToFavorites: () => {},
+    removeFromFavorites: () => {},
   }
 
   static parseData(countyData, selectedRow) {
@@ -77,11 +57,21 @@ class CountyData extends Component {
       selectedRow: 0,
     };
     this.selectCountyData = this.selectCountyData.bind(this);
+    this.changeFavoriteStatus = this.changeFavoriteStatus.bind(this);
   }
 
   selectCountyData(key) {
     this.setState({ selectedRow: 0 });
     this.props.selectCountyData(key);
+  }
+
+  changeFavoriteStatus(newStatusIsFavorite) {
+    const { removeFromFavorites, addToFavorites, selectedCounty } = this.props;
+    if (newStatusIsFavorite) {
+      addToFavorites(selectedCounty);
+    } else {
+      removeFromFavorites(selectedCounty);
+    }
   }
 
   render() {
@@ -91,16 +81,29 @@ class CountyData extends Component {
       availableInformation,
       loadingCounty,
       selectedInfo,
+      favorites,
     } = this.props;
     const { selectedRow } = this.state;
     const parsedData = loadingCounty ? { } : CountyData.parseData(countyData, selectedRow);
     const activeData = availableInformation.find(i => i.path === selectedInfo);
+    const favorite = selectedCounty && favorites.find(f => f.fips === selectedCounty.fips);
     return (
       <Grid>
         {selectedCounty &&
           <div>
-            <h1> {selectedCounty.county} </h1>
-            <h4> {selectedCounty.state} </h4>
+            <Row style={styles.header}>
+              <Col sm={9}>
+                <h1> {selectedCounty.county} </h1>
+                <h4> {selectedCounty.state} </h4>
+              </Col>
+              <Col style={styles.favoriteContainer} sm={3}>
+                <Glyphicon
+                  onClick={() => this.changeFavoriteStatus(!favorite)}
+                  style={favorite ? styles.favoriteSelected : styles.favoriteUnselected}
+                  glyph="heart"
+                />
+              </Col>
+            </Row>
             <br />
             <Nav
               bsStyle="tabs"
@@ -118,7 +121,7 @@ class CountyData extends Component {
               <div>
                 <DataTable
                   countyData={countyData}
-                  rowSelected={index => this.setState({ selectedRow: index })}
+                  handleRowSelected={index => this.setState({ selectedRow: index })}
                   selectedRow={selectedRow}
                 />
                 <LineChart data={parsedData} />
@@ -146,12 +149,22 @@ CountyData.defaultProps = {
 };
 
 const styles = {
-  tableRow: {
-    cursor: 'pointer',
+  header: {
+
   },
-  selectedTableRow: {
-    cursor: 'pointer',
-    backgroundColor: 'lightgray',
+  favoriteContainer: {
+    padding: 30,
+  },
+  favoriteSelected: {
+    float: 'right',
+    fontSize: 30,
+  },
+  favoriteUnselected: {
+    // Simulate border
+    textShadow: '-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black',
+    color: 'white',
+    fontSize: 30,
+    float: 'right',
   },
 };
 

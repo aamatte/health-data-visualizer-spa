@@ -5,17 +5,21 @@ import {
   FETCH_COUNTY_DATA_LOADING,
   FETCH_COUNTY_DATA_FULFILLED,
   FETCH_COUNTY_DATA_REJECTED,
+  ADD_COUNTY_TO_FAVORITES,
+  REMOVE_COUNTY_FROM_FAVORITES,
 } from '../constants';
+
+const FAVORITES_KEY = 'favorites';
 
 const initialState = {
   selectedCounty: null,
   countyData: null,
   counties: [],
-  favorites: [],
   error: null,
   loadingCounties: false,
   loadingCounty: false,
   selectedInfo: 'diabetes-incidence',
+  favorites: localStorage.getItem(FAVORITES_KEY) ? JSON.parse(localStorage.getItem(FAVORITES_KEY)) : [],
 };
 
 export default function update(state = initialState, action) {
@@ -38,7 +42,14 @@ export default function update(state = initialState, action) {
       };
     }
     case FETCH_COUNTY_DATA_FULFILLED: {
-      return { ...state, countyData: action.payload, loadingCounty: false };
+      const [data] = action.payload.data;
+      const selectedCounty = { county: data.county, state: data.state, fips: data.fips };
+      return {
+        ...state,
+        selectedCounty,
+        countyData: action.payload,
+        loadingCounty: false,
+      };
     }
     case FETCH_COUNTY_DATA_REJECTED: {
       return {
@@ -46,6 +57,30 @@ export default function update(state = initialState, action) {
         countyData: null,
         error: action.payload.message,
         loadingCounty: false,
+      };
+    }
+    case ADD_COUNTY_TO_FAVORITES: {
+      const { favorites } = state;
+      const { county } = action.payload;
+      const updatedFavorites = county.fips && !favorites.find(f => f.fips === county.fips) ?
+        [...favorites, county] :
+        [...favorites];
+      localStorage.setItem(FAVORITES_KEY, JSON.stringify(updatedFavorites));
+      return {
+        ...state,
+        favorites: updatedFavorites,
+      };
+    }
+    case REMOVE_COUNTY_FROM_FAVORITES: {
+      const { favorites } = state;
+      const { county } = action.payload;
+      const updatedFavorites = county.fips ?
+        [...favorites.filter(f => f.fips !== county.fips)] :
+        [...favorites];
+      localStorage.setItem(FAVORITES_KEY, JSON.stringify(updatedFavorites));
+      return {
+        ...state,
+        favorites: updatedFavorites,
       };
     }
     default:
